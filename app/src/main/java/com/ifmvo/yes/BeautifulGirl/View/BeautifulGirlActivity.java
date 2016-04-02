@@ -18,11 +18,9 @@ import net.tsz.afinal.FinalBitmap;
 import java.util.List;
 
 
-/**
- * 我的注释呢
- *
- */
 public class BeautifulGirlActivity extends BaseActivity implements IBeautifulGirlView {
+
+    public static final String cmz = "";
 
     public static final String TAG = BeautifulGirlActivity.class.getSimpleName();
     /**
