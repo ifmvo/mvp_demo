@@ -17,8 +17,10 @@ import net.tsz.afinal.FinalBitmap;
 
 import java.util.List;
 
+
 /**
- * 显示美女图片LIst的界面
+ * 我的注释呢
+ *
  */
 public class BeautifulGirlActivity extends BaseActivity implements IBeautifulGirlView {
 
