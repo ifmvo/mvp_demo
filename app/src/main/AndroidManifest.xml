@@ -3,6 +3,8 @@
     package="com.ifmvo.yes" >
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
@@ -10,10 +12,11 @@
         android:icon="@mipmap/logo"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme"
+        android:name=".app.BaseApplication">
 
 
-        <activity android:name=".ui.activity.MainActivity" >
+        <activity android:name=".ui.activity.GirlActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

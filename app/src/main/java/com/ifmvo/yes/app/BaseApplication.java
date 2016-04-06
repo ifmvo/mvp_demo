@@ -4,17 +4,19 @@ import android.app.Application;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.util.DisplayMetrics;
 
-import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiscCache;
+import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiskCache;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.cache.memory.impl.LruMemoryCache;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
+import com.nostra13.universalimageloader.core.display.SimpleBitmapDisplayer;
 import com.nostra13.universalimageloader.utils.StorageUtils;
-import com.squareup.leakcanary.LeakCanary;
 
 import java.io.File;
 import java.util.Locale;
@@ -25,6 +27,7 @@ import java.util.Locale;
  * @author Ht
  */
 public class BaseApplication extends Application {
+
     private static BaseApplication mInstance;
 
     /**
@@ -44,13 +47,21 @@ public class BaseApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-        LeakCanary.install(this);
+//        refWatcher = LeakCanary.install(this);
 
         mInstance = this;
 
         initImageLoader();
         initScreenSize();
     }
+
+//    public static RefWatcher getRefWatcher(Context context) {
+//        BaseApplication application = (BaseApplication) context.getApplicationContext();
+//        return application.refWatcher;
+//    }
+
+//    private RefWatcher refWatcher;
+
 
     /**
      * 初始化imageloader
@@ -62,6 +73,13 @@ public class BaseApplication extends Application {
         DisplayImageOptions defaultOptions = new DisplayImageOptions.Builder()
                 .cacheInMemory(true) // 加载图片时会在内存中加载缓存
                 .cacheOnDisk(true) // 加载图片时会在磁盘中加载缓存
+                .resetViewBeforeLoading(true)
+                .imageScaleType(ImageScaleType.EXACTLY)
+//                .showImageForEmptyUri(R.drawable.loading_image)
+//                .showImageOnFail(R.drawable.load_failed_bit)
+                .bitmapConfig(Bitmap.Config.RGB_565)
+                .considerExifParams(true)
+                .displayer(new SimpleBitmapDisplayer())
                 .build();
 
         ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(
@@ -76,13 +94,14 @@ public class BaseApplication extends Application {
                 .memoryCache(new LruMemoryCache(2 * 1024 * 1024))
                 .memoryCacheSize(2 * 1024 * 1024).memoryCacheSizePercentage(13)
                         // default
-                .diskCache(new UnlimitedDiscCache(cacheDir))
+                .diskCache(new UnlimitedDiskCache(cacheDir))
                         // default
                 .diskCacheSize(20 * 1024 * 1024).diskCacheFileCount(100)
                 .diskCacheFileNameGenerator(new Md5FileNameGenerator()) // default
                 .defaultDisplayImageOptions(defaultOptions) // default
                 .writeDebugLogs().build();
         ImageLoader.getInstance().init(config);
+
     }
 
     public static Context getInstance() {

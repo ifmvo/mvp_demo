@@ -36,7 +36,10 @@ public class G {
      * 录音文件保存路径
      */
     public static final String APPRECORD = STORAGEPATH + "record/";
-
+    /**
+     * 网络请求每页item的个数
+     */
+    public final static String PAGE_SIZE = "10";
     /**
      * 调用拍照request code
      */
