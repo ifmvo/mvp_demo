@@ -1,19 +1,18 @@
-package com.ifmvo.yes.ui.activity;
+package com.ifmvo.yes.ui.fragment;
 
-import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 import android.util.TypedValue;
 
 import com.ifmvo.yes.R;
 import com.ifmvo.yes.app.G;
-import com.ifmvo.yes.base.BaseActivity;
+import com.ifmvo.yes.base.BaseFragment;
 import com.ifmvo.yes.presenter.impl.GirlPresenterImpl;
 import com.ifmvo.yes.presenter.interfaces.IGirlPresenter;
 import com.ifmvo.yes.ui.adapter.GirlAdapter;
 import com.ifmvo.yes.ui.custom.RecycleViewDivider;
-import com.ifmvo.yes.ui.custom.TitleBar;
 import com.ifmvo.yes.ui.view.interfaces.IGirlView;
 import com.ifmvo.yes.utils.Logger;
 import com.ifmvo.yes.vo.info.Girl;
@@ -25,14 +24,10 @@ import java.util.List;
 import butterknife.Bind;
 
 /**
- * BeautifulGirl List
- * ifmvo on 2016/4/3.
+ * ifmvo on 2016/4/6.
  */
-public class GirlActivity extends BaseActivity implements IGirlView,
-        SwipeRefreshLayout.OnRefreshListener{
+public class GirlFragment extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener, IGirlView {
 
-    @Bind(R.id.title_bar)
-    TitleBar titleBar;
     @Bind(R.id.swipe_refresh_layout_girl)
     SwipeRefreshLayout swipeRefreshLayout;
     @Bind(R.id.rv_girl)
@@ -44,13 +39,12 @@ public class GirlActivity extends BaseActivity implements IGirlView,
     boolean hasMoreData = true;
 
     @Override
-    public void initContentView() {
-        setContentView(R.layout.activity_girl);
+    public int getLayoutRes() {
+        return R.layout.fragment_girl;
     }
 
     @Override
     public void initView() {
-        titleBar.setTitle(getString(R.string.girl_title));
         //2列
         final StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager
                 (2, StaggeredGridLayoutManager.VERTICAL);
@@ -77,11 +71,30 @@ public class GirlActivity extends BaseActivity implements IGirlView,
                 if (!swipeRefreshLayout.isRefreshing() && isBottom && hasMoreData) {
                     setRefreshViewVisibility(true);
                     GirlRequest params = new GirlRequest();
-                    params.page = (girlAdapter.getItemCount() / Integer.parseInt(G.PAGE_SIZE) + 1) +"";
-                    girlPresenter.requestMoreGirlDataFromInternet(GirlActivity.this, params);
+                    params.page = (girlAdapter.getItemCount() / G.GIRL_PAGE_SIZE + 1) + "";
+                    girlPresenter.requestMoreGirlDataFromInternet(GirlFragment.this, params);
                 }
             }
         });
+    }
+
+    /**
+     * 当fragment可见的时候才会调用，妈的，骗人
+     */
+    @Override
+    public void onStart() {
+        super.onStart();
+//        showShapeLoadingDialog(true, getString(R.string.loading));
+        GirlRequest params = new GirlRequest();
+        params.page = "1";  //这个是第一次请求或刷新的参数，永远 1
+        girlPresenter.requestGirlDataFromInternet(GirlFragment.this, params);
+        Log.e("info", "onstart");
+
+    }
+
+    @Override
+    public void initPresenter() {
+        girlPresenter = new GirlPresenterImpl();
     }
 
     /**
@@ -92,30 +105,13 @@ public class GirlActivity extends BaseActivity implements IGirlView,
         swipeRefreshLayout.setRefreshing(isShow);
     }
 
-    /**
-     * 1、初始化请求数据没在 onCreate 方法里边进行，
-     *    是因为当你里边此 Activity 再回来，就不调用 onCreate 了
-     * 2、还有就是 此Activity被动离开再回来（例如点击任务栏里边的通知再回来），
-     *    这个方法也会被调用，而 onStart 不会
-     *
-     * 3、所熟知的声明周期并没有这个方法呀，还有待研究！！
-     * @param savedInstanceState
-     */
     @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-
-        showShapeLoadingDialog(true, getString(R.string.loading));
-
+    public void onRefresh() {
         GirlRequest params = new GirlRequest();
         params.page = "1";  //这个是第一次请求或刷新的参数，永远 1
-        girlPresenter.requestGirlDataFromInternet(GirlActivity.this, params);
+        girlPresenter.requestGirlDataFromInternet(GirlFragment.this, params);
     }
 
-    @Override
-    public void initPresenter() {
-        girlPresenter = new GirlPresenterImpl();
-    }
     /**
      * 在Presenter中的请求 Callback 里边调用此方法，把数据传过来
      * @param girlResponse
@@ -128,12 +124,13 @@ public class GirlActivity extends BaseActivity implements IGirlView,
         girlAdapter.clearAndReAddDataToList(list);
         setRefreshViewVisibility(false);
         hideShapeLoadingDialog();
+        hasMoreData = true;
     }
 
     @Override
     public void againQueryGirlData(GirlResponse girlResponse) {
         List<Girl> list = girlResponse.newslist;
-        if (list != null && list.size() < 10){
+        if (list != null && list.size() < G.GIRL_PAGE_SIZE){
             hasMoreData = false;
             showToast(getString(R.string.no_more_data));
         }
@@ -149,15 +146,5 @@ public class GirlActivity extends BaseActivity implements IGirlView,
         hideShapeLoadingDialog();
         //把swipeRefreshLayout的刷新也关了
         setRefreshViewVisibility(false);
-    }
-
-    /**
-     * 下拉刷新
-     */
-    @Override
-    public void onRefresh() {
-        GirlRequest params = new GirlRequest();
-        params.page = "1";  //这个是第一次请求或刷新的参数，永远 1
-        girlPresenter.requestGirlDataFromInternet(GirlActivity.this, params);
     }
 }

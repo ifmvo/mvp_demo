@@ -1,5 +1,6 @@
 package com.ifmvo.yes.presenter.impl;
 
+import com.ifmvo.yes.R;
 import com.ifmvo.yes.base.BasePresenter;
 import com.ifmvo.yes.model.impl.GirlModelImpl;
 import com.ifmvo.yes.model.interfaces.IGirlModel;
@@ -14,6 +15,8 @@ import com.ifmvo.yes.vo.response.GirlResponse;
  * ifmvo on 2016/4/3.
  */
 public class GirlPresenterImpl extends BasePresenter implements IGirlPresenter {
+
+
     @Override
     public void requestGirlDataFromInternet(final IGirlView girlView, GirlRequest girlRequest) {
         IGirlModel girlModel = new GirlModelImpl(girlView.getContext());
@@ -31,7 +34,7 @@ public class GirlPresenterImpl extends BasePresenter implements IGirlPresenter {
             @Override
             public void onFailure(int errorCode) {
                 super.onFailure(errorCode);
-                girlView.handleNoConnect(errorCode+"");
+                girlView.handleNoConnect(girlView.getContext().getString(R.string.cannot_load));
             }
         });
 
@@ -54,6 +57,7 @@ public class GirlPresenterImpl extends BasePresenter implements IGirlPresenter {
             @Override
             public void onFailure(int errorCode) {
                 super.onFailure(errorCode);
+                girlView.handleNoConnect(girlView.getContext().getString(R.string.cannot_load));
             }
         });
     }

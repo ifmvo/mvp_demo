@@ -16,10 +16,14 @@ public class URLs {
     /**
      *  笑话
      */
-    public static final String JOKE_HOST = "http://apis.baidu.com/hihelpsme/chinajoke/getjokelist";
-    public static final String JOKE_API_KEY = "62b1402cf8b3d19b221c2d9f8e834ff5";
+//    public static final String JOKE_HOST = "http://apis.baidu.com/hihelpsme/chinajoke/getjokelist";
+//    public static final String JOKE_API_KEY = "62b1402cf8b3d19b221c2d9f8e834ff5";
 
-
+    /**
+     *  奇闻异事
+     */
+    public static final String QIWEN_HOST = "http://api.avatardata.cn/QiWenNews/Query";
+    public static final String QIWEN_API_KEY = "b35e7bf05412442794fb4f937842bddb";
 
 
 

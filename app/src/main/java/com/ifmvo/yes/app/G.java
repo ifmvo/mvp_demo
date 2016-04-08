@@ -14,6 +14,12 @@ import java.util.Calendar;
  */
 public class G {
 
+
+    /**
+     * 网络请求每页item的个数
+     */
+    public final static int GIRL_PAGE_SIZE = 10;
+    public final static int QIWEN_PAGE_SIZE = 20;
     /**
      * 应用程序名
      */
@@ -36,10 +42,6 @@ public class G {
      * 录音文件保存路径
      */
     public static final String APPRECORD = STORAGEPATH + "record/";
-    /**
-     * 网络请求每页item的个数
-     */
-    public final static String PAGE_SIZE = "10";
     /**
      * 调用拍照request code
      */

@@ -10,7 +10,7 @@ import com.ifmvo.yes.net.URLs;
 public class GirlRequest extends BaseRequest {
     public String key = URLs.GIRL_API_KEY;
     //每次请求的个数
-    public String num = G.PAGE_SIZE;
+    public String num = G.GIRL_PAGE_SIZE+"";
     //第几页
     public String page;
 }

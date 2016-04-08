@@ -1,33 +1,26 @@
 package com.ifmvo.yes.ui.activity;
 
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.ImageView;
 
 import com.ifmvo.yes.R;
 import com.ifmvo.yes.base.BaseActivity;
-import com.ifmvo.yes.presenter.impl.TestPresenterImpl;
-import com.ifmvo.yes.presenter.interfaces.ITestPresenter;
+import com.ifmvo.yes.ui.adapter.MainViewPagerAdapter;
 import com.ifmvo.yes.ui.custom.TitleBar;
-import com.ifmvo.yes.ui.view.interfaces.ITestView;
-import com.ifmvo.yes.vo.request.QueryRequest;
-import com.ifmvo.yes.vo.response.ResultResponse;
-import com.ifmvo.yes.vo.info.Result;
+import com.ifmvo.yes.ui.fragment.GirlFragment;
+import com.ifmvo.yes.ui.fragment.QiwenFragment;
 
 import butterknife.Bind;
 
-public class MainActivity extends BaseActivity implements ITestView {
+public class MainActivity extends BaseActivity {
     @Bind(R.id.title_bar)
     TitleBar titleBar;
-    @Bind(R.id.et_input)
-    EditText etInput;
-    @Bind(R.id.btn_submit)
-    Button btnSubmit;
-    @Bind(R.id.tv_result)
-    TextView tvResult;
-
-    ITestPresenter testPresenter;
+    @Bind(R.id.tabs)
+    TabLayout tabLayout;
+    @Bind(R.id.viewpager)
+    ViewPager viewPager;
 
     @Override
     public void initContentView() {
@@ -37,29 +30,29 @@ public class MainActivity extends BaseActivity implements ITestView {
 
     @Override
     public void initView() {
-        titleBar.setTitle("测试页面");
+        titleBar.setTitle(getString(R.string.index_title));
 
-        btnSubmit.setOnClickListener(new View.OnClickListener() {
+        ImageView iv = new ImageView(getContext());
+        iv.setImageResource(R.mipmap.about);
+        titleBar.setLeftView(iv);
+
+        iv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                QueryRequest queryParameter = new QueryRequest();
-                queryParameter.phone = etInput.getText().toString();
-
-                testPresenter.attributionToInquiries(MainActivity.this, queryParameter);
+                AboutActivity.action(MainActivity.this);
             }
         });
+
+        MainViewPagerAdapter adapter = new MainViewPagerAdapter(getSupportFragmentManager());
+        adapter.addFragment(new QiwenFragment(), "奇闻");
+        adapter.addFragment(new GirlFragment(), "美女");
+        viewPager.setAdapter(adapter);
+
+        //需要在viewPager设置adapter后面写
+        tabLayout.setupWithViewPager(viewPager);
     }
 
     @Override
     public void initPresenter() {
-        testPresenter = new TestPresenterImpl();
-    }
-
-    @Override
-    public void queryResult(ResultResponse result) {
-        Result resultInfo = result.result;
-        if (resultInfo != null) {
-            showToast("您的手机归属地信息是:\n" + resultInfo.province + resultInfo.city + resultInfo.company + resultInfo.card);
-        }
     }
 }

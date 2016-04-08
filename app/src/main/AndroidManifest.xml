@@ -15,14 +15,20 @@
         android:theme="@style/AppTheme"
         android:name=".app.BaseApplication">
 
-
-        <activity android:name=".ui.activity.GirlActivity" >
+        <activity android:name=".ui.activity.MainActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".ui.activity.WebActivity" >
+        </activity>
+
+        <activity android:name=".ui.activity.AboutActivity" >
+        </activity>
+
+
     </application>
 
 </manifest>
