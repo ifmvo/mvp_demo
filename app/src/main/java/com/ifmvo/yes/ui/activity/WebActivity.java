@@ -55,7 +55,7 @@ public class WebActivity extends BaseActivity implements SwipeRefreshLayout.OnRe
         titleBar.setTitle(title);
 
         ImageView iv = new ImageView(getContext());
-        iv.setImageResource(R.mipmap.off);
+        iv.setImageResource(R.mipmap.back_button);
         titleBar.setLeftView(iv);
 
         iv.setOnClickListener(new View.OnClickListener() {

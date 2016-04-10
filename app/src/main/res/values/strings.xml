@@ -5,7 +5,7 @@
     <string name="girl_title">美女</string>
     <string name="no_more_data">没有更多数据了</string>
     <string name="loaded_data">又加载了%1$s条数据</string>
-    <string name="loading">正在加载</string>
+    <string name="loading">正在加载...</string>
 
     <string name="index_title">首页</string>
     <string name="about">关于</string>
@@ -15,5 +15,7 @@
     <string name="my_phone_number">电话：18945104090</string>
     <string name="my_github">GitHub：https://github.com/ifmvo</string>
     <string name="my_email">邮箱：cmz546666822@gmail.com</string>
+
+    <string name="weather_info">%1$s %2$s %3$s℃</string>
 
 </resources>

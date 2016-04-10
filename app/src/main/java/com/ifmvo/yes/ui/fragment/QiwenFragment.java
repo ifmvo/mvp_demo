@@ -105,6 +105,7 @@ public class QiwenFragment extends BaseFragment implements IQiWenView,
         setRefreshViewVisibility(false);
         hideShapeLoadingDialog();
         hasMoreData = true;
+        hideShapeLoadingDialog();
     }
 
     @Override
@@ -145,6 +146,7 @@ public class QiwenFragment extends BaseFragment implements IQiWenView,
         super.setUserVisibleHint(isVisibleToUser);
 
         if(isVisibleToUser && !doOnStartLoadData && !haveLoadingData){
+            showShapeLoadingDialog(false, getString(R.string.loading));
             notifyRequest(true);
             haveLoadingData = true;
         }
@@ -156,6 +158,7 @@ public class QiwenFragment extends BaseFragment implements IQiWenView,
         //可见、在onstart、没请求过
         if (doOnStartLoadData && !haveLoadingData){
             if (getUserVisibleHint()) {
+                showShapeLoadingDialog(false, getString(R.string.loading));
                 notifyRequest(true);
             }else{
                 doOnStartLoadData = false;

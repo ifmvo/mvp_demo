@@ -109,6 +109,7 @@ public class GirlFragment extends BaseFragment implements SwipeRefreshLayout.OnR
         setRefreshViewVisibility(false);
         hideShapeLoadingDialog();
         hasMoreData = true;
+        hideShapeLoadingDialog();
     }
 
     @Override
@@ -147,6 +148,7 @@ public class GirlFragment extends BaseFragment implements SwipeRefreshLayout.OnR
         super.setUserVisibleHint(isVisibleToUser);
 
         if(isVisibleToUser && !doOnStartLoadData && !haveLoadingData){
+            showShapeLoadingDialog(false, getString(R.string.loading));
             notifyRequest(true);
             haveLoadingData = true;
         }
@@ -158,6 +160,7 @@ public class GirlFragment extends BaseFragment implements SwipeRefreshLayout.OnR
         //可见、在onstart、没请求过
         if (doOnStartLoadData && !haveLoadingData){
             if (getUserVisibleHint()) {
+                showShapeLoadingDialog(false, getString(R.string.loading));
                 notifyRequest(true);
             }else{
                 doOnStartLoadData = false;

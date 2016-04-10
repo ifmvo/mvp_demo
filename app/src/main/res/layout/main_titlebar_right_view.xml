@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="horizontal"
+              android:id="@+id/weather_container"
+              android:layout_width="wrap_content"
+              android:gravity="center_vertical"
+              android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/title_bar_city"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:text="你猜"
+        />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@mipmap/weather_button"/>
+
+</LinearLayout>

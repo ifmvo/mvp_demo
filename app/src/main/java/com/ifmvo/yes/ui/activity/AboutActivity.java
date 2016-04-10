@@ -40,7 +40,7 @@ public class AboutActivity extends BaseActivity {
         titleBar.setTitle(getString(R.string.about));
 
         ImageView iv = new ImageView(getContext());
-        iv.setImageResource(R.mipmap.off);
+        iv.setImageResource(R.mipmap.back_button);
         titleBar.setLeftView(iv);
 
         iv.setOnClickListener(new View.OnClickListener() {

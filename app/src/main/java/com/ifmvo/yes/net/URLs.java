@@ -25,8 +25,11 @@ public class URLs {
     public static final String QIWEN_HOST = "http://api.avatardata.cn/QiWenNews/Query";
     public static final String QIWEN_API_KEY = "b35e7bf05412442794fb4f937842bddb";
 
-
-
+    /**
+     * 天气
+     */
+    public static final String WEATHER_HOST = "http://api.avatardata.cn/Weather/Query";
+    public static final String WEATHER_API_KEY = "bcafae524fae432c96031fff8fdbe3eb";
 
 
 
