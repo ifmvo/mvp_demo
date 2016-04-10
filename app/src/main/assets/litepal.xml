@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<litepal>
+    <dbname value="yes" ></dbname>
+
+    <version value="1" ></version>
+
+    <list>
+        <mapping class="com.ifmvo.yes.vo.info.Girl"></mapping>
+        <mapping class="com.ifmvo.yes.vo.info.QiWen"></mapping>
+    </list>
+</litepal>

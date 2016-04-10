@@ -4,7 +4,6 @@ package com.ifmvo.yes.ui.fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.util.TypedValue;
 import android.widget.LinearLayout;
 
@@ -17,10 +16,8 @@ import com.ifmvo.yes.ui.activity.WebActivity;
 import com.ifmvo.yes.ui.adapter.QiWenAdapter;
 import com.ifmvo.yes.ui.custom.RecycleViewDivider;
 import com.ifmvo.yes.ui.view.interfaces.IQiWenView;
-import com.ifmvo.yes.utils.Logger;
 import com.ifmvo.yes.vo.info.QiWen;
 import com.ifmvo.yes.vo.request.QiWenRequest;
-import com.ifmvo.yes.vo.response.QiWenResponse;
 
 import java.util.List;
 
@@ -38,9 +35,20 @@ public class QiwenFragment extends BaseFragment implements IQiWenView,
     @Bind(R.id.rv_qiwen)
     RecyclerView recyclerView;
 
-    IQiWenPresenter qiWenPresenter;
+    IQiWenPresenter qiWenPresenter = new QiWenPresenterImpl();
     QiWenAdapter qiWenAdapter;
 
+    /**
+     * 数据是否已经请求过了
+     */
+    boolean haveLoadingData = false;
+    /**
+     * 是否在onStart方法里边请求数据
+     */
+    boolean doOnStartLoadData = true;
+    /**
+     * 是否还有更多的数据
+     */
     boolean hasMoreData = true;
 
     @Override
@@ -70,28 +78,16 @@ public class QiwenFragment extends BaseFragment implements IQiWenView,
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                Log.e("info", "最后一个可见的：" + layoutManager.findLastCompletelyVisibleItemPosition());
-                Log.e("info", "getItemCount()" + qiWenAdapter.getItemCount());
                 boolean isBottom = layoutManager.findLastCompletelyVisibleItemPosition()
                         >= qiWenAdapter.getItemCount() - 1;
                 if (!swipeRefreshLayout.isRefreshing() && isBottom && hasMoreData) {
                     setRefreshViewVisibility(true);
-                    QiWenRequest params = new QiWenRequest();
-                    params.page = (qiWenAdapter.getItemCount() / G.QIWEN_PAGE_SIZE + 1) + "";
-                    qiWenPresenter.requestMoreQiWenData(QiwenFragment.this, params);
+                    notifyRequest(false);
                 }
             }
         });
 
         qiWenAdapter.setOnItemClickListener(this);
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        QiWenRequest  params = new QiWenRequest();
-        params.page = "1";
-        qiWenPresenter.requestQiWenData(QiwenFragment.this, params);
     }
 
     private void setRefreshViewVisibility(boolean isShow) {
@@ -100,13 +96,10 @@ public class QiwenFragment extends BaseFragment implements IQiWenView,
 
     @Override
     public void initPresenter() {
-        qiWenPresenter = new QiWenPresenterImpl();
     }
 
     @Override
-    public void queryQiWenDataFromInternet(QiWenResponse qiWenResponse) {
-        List<QiWen> list = qiWenResponse.result;
-        Logger.e("个数："+list.size());
+    public void queryQiWenDataFromInternet(List<QiWen> list) {
         //如果请求回来的list大小为0 ，就说明没有更多数据了
         qiWenAdapter.clearAndReAddDataToList(list);
         setRefreshViewVisibility(false);
@@ -115,13 +108,19 @@ public class QiwenFragment extends BaseFragment implements IQiWenView,
     }
 
     @Override
-    public void againQueryQiWenFromInternet(QiWenResponse qiWenResponse) {
-        List<QiWen> list = qiWenResponse.result;
-        if (list != null && list.size() < G.QIWEN_PAGE_SIZE){
+    public void againQueryQiWenFromInternet(List<QiWen> list) {
+
+        if (list != null){
+            if (list.size() < G.QIWEN_PAGE_SIZE){
+                hasMoreData = false;
+                showToast(getString(R.string.no_more_data));
+            }
+            if (list.size() != 0)
+                qiWenAdapter.againAddDataToList(list);
+        }else{
             hasMoreData = false;
             showToast(getString(R.string.no_more_data));
         }
-        qiWenAdapter.againAddDataToList(list);
         setRefreshViewVisibility(false);
     }
 
@@ -132,13 +131,56 @@ public class QiwenFragment extends BaseFragment implements IQiWenView,
 
     @Override
     public void onRefresh() {
-        QiWenRequest  params = new QiWenRequest();
-        params.page = "1";
-        qiWenPresenter.requestQiWenData(QiwenFragment.this, params);
+        notifyRequest(true);
     }
 
     @Override
     public void OnItemClick(QiWen qiWen) {
-        WebActivity.action(getContext(), qiWen.url,qiWen.description);
+        WebActivity.action(getContext(), qiWen.getUrl(), qiWen.getDescription());
     }
+
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+
+        if(isVisibleToUser && !doOnStartLoadData && !haveLoadingData){
+            notifyRequest(true);
+            haveLoadingData = true;
+        }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        //可见、在onstart、没请求过
+        if (doOnStartLoadData && !haveLoadingData){
+            if (getUserVisibleHint()) {
+                notifyRequest(true);
+            }else{
+                doOnStartLoadData = false;
+            }
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        haveLoadingData = false;
+    }
+
+    /**
+     * @param isFirst true 就是请求第一页，false 就是加载更多
+     */
+    public void notifyRequest(boolean isFirst){
+        QiWenRequest params = new QiWenRequest();
+        if (isFirst){
+            params.page = "1";
+            qiWenPresenter.requestQiWenData(QiwenFragment.this, params);
+        }else{
+            params.page = (qiWenAdapter.getItemCount() / G.GIRL_PAGE_SIZE + 1) + "";
+            qiWenPresenter.requestMoreQiWenData(QiwenFragment.this, params);
+        }
+    }
+
 }

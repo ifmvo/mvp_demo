@@ -22,6 +22,9 @@ public class MainActivity extends BaseActivity {
     @Bind(R.id.viewpager)
     ViewPager viewPager;
 
+//    IGirlPresenter girlPresenter;
+//    IQiWenPresenter qiWenPresenter;
+
     @Override
     public void initContentView() {
         // 设置布局文件
@@ -54,5 +57,7 @@ public class MainActivity extends BaseActivity {
 
     @Override
     public void initPresenter() {
+//        girlPresenter = new GirlPresenterImpl();
+//        qiWenPresenter = new QiWenPresenterImpl();
     }
 }

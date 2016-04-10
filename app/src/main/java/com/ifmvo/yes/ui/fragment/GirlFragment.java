@@ -3,7 +3,6 @@ package com.ifmvo.yes.ui.fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.util.Log;
 import android.util.TypedValue;
 
 import com.ifmvo.yes.R;
@@ -14,10 +13,8 @@ import com.ifmvo.yes.presenter.interfaces.IGirlPresenter;
 import com.ifmvo.yes.ui.adapter.GirlAdapter;
 import com.ifmvo.yes.ui.custom.RecycleViewDivider;
 import com.ifmvo.yes.ui.view.interfaces.IGirlView;
-import com.ifmvo.yes.utils.Logger;
 import com.ifmvo.yes.vo.info.Girl;
 import com.ifmvo.yes.vo.request.GirlRequest;
-import com.ifmvo.yes.vo.response.GirlResponse;
 
 import java.util.List;
 
@@ -33,8 +30,17 @@ public class GirlFragment extends BaseFragment implements SwipeRefreshLayout.OnR
     @Bind(R.id.rv_girl)
     RecyclerView recyclerView;
 
-    IGirlPresenter girlPresenter;
+    IGirlPresenter girlPresenter = new GirlPresenterImpl();
     GirlAdapter girlAdapter;
+
+    /**
+     * 数据是否已经请求过了
+     */
+    boolean haveLoadingData = false;
+    /**
+     * 是否在onStart方法里边请求数据
+     */
+    boolean doOnStartLoadData = true;
 
     boolean hasMoreData = true;
 
@@ -70,31 +76,14 @@ public class GirlFragment extends BaseFragment implements SwipeRefreshLayout.OnR
                                 >= girlAdapter.getItemCount() - 4;
                 if (!swipeRefreshLayout.isRefreshing() && isBottom && hasMoreData) {
                     setRefreshViewVisibility(true);
-                    GirlRequest params = new GirlRequest();
-                    params.page = (girlAdapter.getItemCount() / G.GIRL_PAGE_SIZE + 1) + "";
-                    girlPresenter.requestMoreGirlDataFromInternet(GirlFragment.this, params);
+                    notifyRequest(false);
                 }
             }
         });
     }
 
-    /**
-     * 当fragment可见的时候才会调用，妈的，骗人
-     */
-    @Override
-    public void onStart() {
-        super.onStart();
-//        showShapeLoadingDialog(true, getString(R.string.loading));
-        GirlRequest params = new GirlRequest();
-        params.page = "1";  //这个是第一次请求或刷新的参数，永远 1
-        girlPresenter.requestGirlDataFromInternet(GirlFragment.this, params);
-        Log.e("info", "onstart");
-
-    }
-
     @Override
     public void initPresenter() {
-        girlPresenter = new GirlPresenterImpl();
     }
 
     /**
@@ -107,19 +96,14 @@ public class GirlFragment extends BaseFragment implements SwipeRefreshLayout.OnR
 
     @Override
     public void onRefresh() {
-        GirlRequest params = new GirlRequest();
-        params.page = "1";  //这个是第一次请求或刷新的参数，永远 1
-        girlPresenter.requestGirlDataFromInternet(GirlFragment.this, params);
+        notifyRequest(true);
     }
 
     /**
      * 在Presenter中的请求 Callback 里边调用此方法，把数据传过来
-     * @param girlResponse
      */
     @Override
-    public void queryGirlData(GirlResponse girlResponse) {
-        List<Girl> list = girlResponse.newslist;
-        Logger.e(list.toString());
+    public void queryGirlData(List<Girl> list) {
         //如果请求回来的list大小为0 ，就说明没有更多数据了
         girlAdapter.clearAndReAddDataToList(list);
         setRefreshViewVisibility(false);
@@ -128,13 +112,23 @@ public class GirlFragment extends BaseFragment implements SwipeRefreshLayout.OnR
     }
 
     @Override
-    public void againQueryGirlData(GirlResponse girlResponse) {
-        List<Girl> list = girlResponse.newslist;
-        if (list != null && list.size() < G.GIRL_PAGE_SIZE){
+    public void againQueryGirlData(List<Girl> list) {
+
+        /**
+         * 如果没有更多数据，
+         * list可能为 空 或 list.size() < page_size
+         */
+        if (list != null){
+            if (list.size() < G.GIRL_PAGE_SIZE){
+                hasMoreData = false;
+                showToast(getString(R.string.no_more_data));
+            }
+            if (list.size() != 0)
+                girlAdapter.againAddDataToList(list);
+        }else{
             hasMoreData = false;
             showToast(getString(R.string.no_more_data));
         }
-        girlAdapter.againAddDataToList(list);
         setRefreshViewVisibility(false);
     }
 
@@ -146,5 +140,45 @@ public class GirlFragment extends BaseFragment implements SwipeRefreshLayout.OnR
         hideShapeLoadingDialog();
         //把swipeRefreshLayout的刷新也关了
         setRefreshViewVisibility(false);
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+
+        if(isVisibleToUser && !doOnStartLoadData && !haveLoadingData){
+            notifyRequest(true);
+            haveLoadingData = true;
+        }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        //可见、在onstart、没请求过
+        if (doOnStartLoadData && !haveLoadingData){
+            if (getUserVisibleHint()) {
+                notifyRequest(true);
+            }else{
+                doOnStartLoadData = false;
+            }
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        haveLoadingData = false;
+    }
+
+    public void notifyRequest(boolean isFirst){
+        GirlRequest params = new GirlRequest();
+        if (isFirst){
+            params.page = "1";
+            girlPresenter.requestGirlDataFromInternet(GirlFragment.this, params);
+        }else{
+            params.page = (girlAdapter.getItemCount() / G.GIRL_PAGE_SIZE + 1) + "";
+            girlPresenter.requestMoreGirlDataFromInternet(GirlFragment.this, params);
+        }
     }
 }

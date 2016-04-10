@@ -1,6 +1,5 @@
 package com.ifmvo.yes.app;
 
-import android.app.Application;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -18,6 +17,8 @@ import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.nostra13.universalimageloader.core.display.SimpleBitmapDisplayer;
 import com.nostra13.universalimageloader.utils.StorageUtils;
 
+import org.litepal.LitePalApplication;
+
 import java.io.File;
 import java.util.Locale;
 
@@ -26,7 +27,7 @@ import java.util.Locale;
  *
  * @author Ht
  */
-public class BaseApplication extends Application {
+public class BaseApplication extends LitePalApplication {
 
     private static BaseApplication mInstance;
 

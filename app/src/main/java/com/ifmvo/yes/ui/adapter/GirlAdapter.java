@@ -65,8 +65,8 @@ public class GirlAdapter extends RecyclerView.Adapter<GirlAdapter.GirlViewHolder
 //                    }
 //                });
 
-        ImageLoader.getInstance().displayImage(g.picUrl, holder.ratioImageView);
-        holder.textView.setText(g.title + "," + g.description);
+        ImageLoader.getInstance().displayImage(g.getPicUrl(), holder.ratioImageView);
+        holder.textView.setText(g.getTitle() + "," + g.getDescription());
     }
 
     @Override
@@ -75,14 +75,18 @@ public class GirlAdapter extends RecyclerView.Adapter<GirlAdapter.GirlViewHolder
     }
 
     public void clearAndReAddDataToList(List<Girl> g){
-        girls.clear();
-        girls.addAll(g);
-        notifyDataSetChanged();
+        if (g != null && g.size() > 0){
+            girls.clear();
+            girls.addAll(g);
+            notifyDataSetChanged();
+        }
     }
 
     public void againAddDataToList(List<Girl> g){
-        girls.addAll(g);
-        notifyDataSetChanged();
+        if (g != null && g.size() > 0){
+            girls.addAll(g);
+            notifyDataSetChanged();
+        }
     }
 
     public class GirlViewHolder extends RecyclerView.ViewHolder {

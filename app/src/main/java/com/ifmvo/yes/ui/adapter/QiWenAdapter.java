@@ -53,9 +53,9 @@ public class QiWenAdapter extends RecyclerView.Adapter<QiWenAdapter.QiWenViewHol
     @Override
     public void onBindViewHolder(QiWenViewHolder holder, int position) {
         final QiWen q = qiWens.get(position);
-        ImageLoader.getInstance().displayImage(q.picUrl, holder.ratioImageView);
-        holder.tvTitle.setText(q.title);
-        holder.tvDescription.setText(q.description);
+        ImageLoader.getInstance().displayImage(q.getPicUrl(), holder.ratioImageView);
+        holder.tvTitle.setText(q.getTitle());
+        holder.tvDescription.setText(q.getDescription());
         holder.container.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -70,14 +70,18 @@ public class QiWenAdapter extends RecyclerView.Adapter<QiWenAdapter.QiWenViewHol
     }
 
     public void clearAndReAddDataToList(List<QiWen> q){
-        qiWens.clear();
-        qiWens.addAll(q);
-        notifyDataSetChanged();
+        if (q != null & q.size() > 0){
+            qiWens.clear();
+            qiWens.addAll(q);
+            notifyDataSetChanged();
+        }
     }
 
     public void againAddDataToList(List<QiWen> q){
-        qiWens.addAll(q);
-        notifyDataSetChanged();
+        if (q != null & q.size() > 0){
+            qiWens.addAll(q);
+            notifyDataSetChanged();
+        }
     }
 
     public class QiWenViewHolder extends RecyclerView.ViewHolder{

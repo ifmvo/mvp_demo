@@ -21,4 +21,5 @@ public class QiWenModelImpl extends BaseModel implements IQiWenModel {
     public void requestQiWenData(QiWenRequest qiWenRequest, StringTransactionListener stringTransactionListener) {
         get(getContext(), URLs.QIWEN_HOST, qiWenRequest, stringTransactionListener);
     }
+
 }

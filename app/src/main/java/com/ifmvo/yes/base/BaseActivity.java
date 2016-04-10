@@ -54,7 +54,7 @@ public abstract class BaseActivity extends FragmentActivity implements IBaseView
         super.onCreate(savedInstanceState);
         // 隐藏标题栏
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-
+        // android 4.4w api 19 或更高才能使用
         SystemBarTintManager tintManager;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
