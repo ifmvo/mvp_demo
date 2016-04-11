@@ -22,7 +22,6 @@ import java.util.List;
  */
 public class QiWenPresenterImpl extends BasePresenter implements IQiWenPresenter {
 
-
     @Override
     public void requestQiWenData(final IQiWenView qiWenView, QiWenRequest qiWenRequest) {
 

@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.util.DisplayMetrics;
 
+import com.baidu.location.LocationService;
 import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiskCache;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.cache.memory.impl.LruMemoryCache;
@@ -43,17 +44,21 @@ public class BaseApplication extends LitePalApplication {
      * 屏幕密度
      */
     public static float screenDensity;
+    private LocationService locationService;
 
     @Override
     public void onCreate() {
         super.onCreate();
-
 //        refWatcher = LeakCanary.install(this);
-
         mInstance = this;
-
         initImageLoader();
         initScreenSize();
+        //初始化定位sdk
+        locationService = new LocationService(getApplicationContext());
+    }
+
+    public LocationService getLocationSerivce(){
+        return locationService;
     }
 
 //    public static RefWatcher getRefWatcher(Context context) {
