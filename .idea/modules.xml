@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/YES.iml" filepath="$PROJECT_DIR$/YES.iml" />
+      <module fileurl="file://$PROJECT_DIR$/MVP_Demo.iml" filepath="$PROJECT_DIR$/MVP_Demo.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/shapeloading/shapeloading.iml" filepath="$PROJECT_DIR$/shapeloading/shapeloading.iml" />
     </modules>
